@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db';
+import authRoutes from './routes/auth.routes'; // new
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
+app.use('/api/auth', authRoutes); //new
 
 app.get('/health', (req: Request, res: Response) => {
     res.status(200).json({
