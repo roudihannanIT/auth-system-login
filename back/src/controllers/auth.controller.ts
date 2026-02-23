@@ -3,6 +3,7 @@ import {User} from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import {generateToken} from '../utils/generateToken';
 
+// Register
 export const register = async (req: Request, res: Response) => {
     try {
         const {name, email, password} = req.body;
@@ -37,6 +38,7 @@ export const register = async (req: Request, res: Response) => {
     }
 };
 
+// Login
 export const login = async (req: Request, res: Response) => {
     try {
         const {email, password} = req.body;
@@ -66,4 +68,17 @@ export const login = async (req: Request, res: Response) => {
             error: (error as Error).message
         });
     }
+};
+
+// Logout
+export const logout = (req: Request, res: Response) => {
+    // delete cookie
+    res.cookie('jwt',"",{
+        httpOnly: true,
+        expires: new Date(0),
+    });
+
+    res.status(200).json({
+        message: "Logged out successfully"
+    });
 };
