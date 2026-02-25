@@ -2,11 +2,21 @@ import {Request, Response} from 'express';
 import {User} from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import {generateToken} from '../utils/generateToken';
+import {registerSchema, loginSchema} from '../utils/validation';
 
 // Register
 export const register = async (req: Request, res: Response) => {
     try {
-        const {name, email, password} = req.body;
+
+        const result = registerSchema.safeParse(req.body);
+        if(!result.success) {
+            return res.status(400).json({
+                message: 'Validation failed',
+                errors: result.error.issues.map(err => err.message),
+            });
+        }
+
+        const {name, email, password} = result.data;
 
         const userExists = await User.findOne({email});
         if(userExists) {
@@ -41,7 +51,16 @@ export const register = async (req: Request, res: Response) => {
 // Login
 export const login = async (req: Request, res: Response) => {
     try {
-        const {email, password} = req.body;
+
+        const result = loginSchema.safeParse(req.body);
+        if(!result.success) {
+            return res.status(400).json({
+                message: 'Validation failed',
+                errors: result.error.issues.map(err => err.message),
+            });
+        }
+
+        const {email, password} = result.data;
 
         const user = await User.findOne({email}).select('+password');
 
